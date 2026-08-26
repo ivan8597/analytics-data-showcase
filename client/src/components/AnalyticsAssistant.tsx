@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Bot, ChevronDown, ExternalLink, LoaderCircle, RefreshCw, Send, Sparkles, Trash2, X } from "lucide-react";
+import "./assistant.css";
 
 type Message = { role: "assistant" | "user"; text: string; link?: string; label?: string };
 type KnowledgeItem = { keywords: string[]; answer: string; link?: string; label?: string };
