@@ -1,9 +1,9 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Bot, ChevronDown, ExternalLink, Send, Sparkles, X } from "lucide-react";
-import "./assistant.css";
+import { Bot, ChevronDown, ExternalLink, LoaderCircle, RefreshCw, Send, Sparkles, Trash2, X } from "lucide-react";
 
 type Message = { role: "assistant" | "user"; text: string; link?: string; label?: string };
 type KnowledgeItem = { keywords: string[]; answer: string; link?: string; label?: string };
+type AssistantAnswer = Omit<KnowledgeItem, "keywords">;
 
 const knowledge: KnowledgeItem[] = [
   {
@@ -38,15 +38,15 @@ const knowledge: KnowledgeItem[] = [
   },
   {
     keywords: ["кейс", "логистика", "транспорт", "результат", "эффект", "power bi"],
-    answer: "В кейсе для логистической компании операционные, финансовые и HR-данные сведены в маршрут Sources → Staging → Data Vault → Data Marts → BI. Показатели проекта: отчётность за 15–20 минут вместо нескольких часов, примерно на 70% меньше ручных операций и более 30 автоматизированных проверок качества.",
+    answer: "В кейсе для логистической компании операционные, финансовые и HR-данные сведены в маршрут Sources → Staging → Data Vault → Data Marts → BI. Показатели: отчётность 15–20 минут вместо часов, ~70% меньше ручных операций и 30+ проверок качества.",
     link: "#case",
     label: "Открыть кейс",
   },
   {
     keywords: ["crypto", "крипто", "bitcoin", "btc", "eth", "coinbase", "pet", "open source"],
-    answer: "Открытый pet-проект показывает end-to-end DWH pipeline для BTC-USD и ETH-USD: Coinbase API → MinIO/S3 → PostgreSQL/Greenplum → dbt → ClickHouse → BI. Пайплайн запускается ежечасно, использует append-only raw layer, идемпотентную serving-модель и тесты качества.",
+    answer: "Открытый pet-проект показывает end-to-end DWH pipeline для BTC-USD и ETH-USD: Coinbase API → MinIO/S3 → PostgreSQL/Greenplum → dbt → ClickHouse → BI. Пайплайн hourly, append-only raw layer, идемпотентная serving-модель и тесты качества.",
     link: "#case",
-    label: "К открытому проекту",
+    label: "К open source",
   },
   {
     keywords: ["контакт", "заявка", "связаться", "почта", "email", "обсудить"],
@@ -60,67 +60,70 @@ const knowledge: KnowledgeItem[] = [
     link: "#poc",
     label: "К блоку POC",
   },
+  {
+    keywords: ["политика", "данные", "privacy", "конфиденциальность", "история"],
+    answer: "AI-агент отвечает по встроенной базе знаний о приложении. История диалога хранится только в сеансе браузера и не отправляется на сервер витрины. Не вводите пароли и персональные данные.",
+    link: "/privacy.html",
+    label: "Политика данных",
+  },
 ];
 
-const suggestions = [
-  "Что это за сайт?",
-  "Как устроен контур данных?",
-  "Какие процессы вы закрываете?",
-  "Расскажите про кейс",
-  "Есть open source проект?",
-  "Как связаться?",
-];
+const suggestions = ["Что входит в контур данных?", "Расскажи про кейс", "Что такое архитектурный POC?", "Как связаться?"];
 
-function findAnswer(question: string): KnowledgeItem {
-  const normalized = question.toLowerCase();
+function findAnswer(question: string): AssistantAnswer {
+  const normalized = question.toLowerCase().replace(/ё/g, "е");
   const scored = knowledge
-    .map((item) => ({
-      item,
-      score: item.keywords.reduce((sum, keyword) => sum + (normalized.includes(keyword) ? 1 : 0), 0),
-    }))
-    .filter((entry) => entry.score > 0)
+    .map((item) => ({ item, score: item.keywords.reduce((total, keyword) => total + (normalized.includes(keyword) ? 1 : 0), 0) }))
     .sort((a, b) => b.score - a.score);
 
-  if (scored[0]) return scored[0].item;
-
+  if (scored[0]?.score) return scored[0].item;
   return {
-    keywords: [],
-    answer: "Я могу рассказать про контур данных, процессы, реестр витрин, Excel-практику, кейс по логистике, open-source crypto pipeline, POC и контакты. Задайте вопрос по одному из этих разделов.",
-    link: "#contour",
-    label: "К контуру",
+    answer: "Я знаю содержание этой витрины: контур DWH, процессы Airflow/dbt/Soda Core, реестр витрин, Excel-практику, логистический кейс, open-source crypto pipeline, POC и контакты. Уточните тему — отвечу точнее.",
+    link: "#top",
+    label: "Посмотреть все разделы",
   };
 }
 
 export default function AnalyticsAssistant() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [lastQuestion, setLastQuestion] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      text: "Здравствуйте! Я AI-агент витрины. Спросите про контур данных, процессы, кейс, реестр или контакты — отвечу по содержанию сайта.",
-    },
+    { role: "assistant", text: "Привет! Я навигатор по витрине данных. Расскажу про архитектуру, процессы, кейсы и помогу перейти к нужному разделу." },
   ]);
 
-  const latestSuggestion = useMemo(
-    () => suggestions.filter((suggestion) => !messages.some((message) => message.text === suggestion))[0],
-    [messages],
-  );
+  const latestSuggestion = useMemo(() => suggestions.filter((suggestion) => !messages.some((message) => message.text === suggestion))[0], [messages]);
 
-  const ask = (question: string) => {
+  const ask = async (question: string) => {
     const trimmed = question.trim();
-    if (!trimmed) return;
-    const result = findAnswer(trimmed);
-    setMessages((current) => [
-      ...current,
-      { role: "user", text: trimmed },
-      { role: "assistant", text: result.answer, link: result.link, label: result.label },
-    ]);
+    if (!trimmed || isLoading) return;
     setInput("");
+    setError("");
+    setLastQuestion(trimmed);
+    setIsLoading(true);
+    setMessages((current) => [...current, { role: "user", text: trimmed }]);
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 350));
+      const result = findAnswer(trimmed);
+      setMessages((current) => [...current, { role: "assistant", text: result.answer, link: result.link, label: result.label }]);
+    } catch {
+      setError("Не удалось сформировать ответ. Попробуйте ещё раз.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const clearHistory = () => {
+    setMessages([{ role: "assistant", text: "История очищена. Задайте новый вопрос по разделам витрины." }]);
+    setError("");
+    setLastQuestion("");
   };
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    ask(input);
+    void ask(input);
   };
 
   return (
@@ -128,65 +131,26 @@ export default function AnalyticsAssistant() {
       {open && (
         <section className="assistant-panel" aria-label="AI-агент по приложению">
           <div className="assistant-head">
-            <div className="assistant-title">
-              <span className="assistant-orb">
-                <Bot size={18} />
-              </span>
-              <div>
-                <strong>AI-агент витрины</strong>
-                <small>знает разделы и контур данных</small>
-              </div>
-            </div>
-            <button className="assistant-close" type="button" onClick={() => setOpen(false)} aria-label="Закрыть чат">
-              <X size={18} />
-            </button>
+            <div className="assistant-title"><span className="assistant-orb"><Bot size={18} /></span><div><strong>AI-агент витрины</strong><small>знает разделы и контур данных</small></div></div>
+            <div className="assistant-tools"><button className="assistant-tool" type="button" onClick={clearHistory} disabled={isLoading} aria-label="Очистить историю"><Trash2 size={15} /></button><button className="assistant-close" type="button" onClick={() => setOpen(false)} aria-label="Закрыть чат"><X size={18} /></button></div>
           </div>
-          <div className="assistant-messages" aria-live="polite">
-            {messages.map((message, index) => (
-              <div className={`assistant-message assistant-${message.role}`} key={`${message.role}-${index}`}>
-                <span>{message.text}</span>
-                {message.link && message.label && (
-                  <a className="assistant-link" href={message.link}>
-                    {message.label} <ExternalLink size={12} />
-                  </a>
-                )}
-              </div>
-            ))}
+          <div className="assistant-messages" aria-live="polite" aria-busy={isLoading}>
+            {messages.map((message, index) => <div className={`assistant-message assistant-${message.role}`} key={`${message.role}-${index}`}><span>{message.text}</span>{message.link && message.label && <a className="assistant-link" href={message.link}>{message.label} <ExternalLink size={12} /></a></div>)}
+            {isLoading && <div className="assistant-loading"><LoaderCircle size={15} /> Формирую ответ по приложению…</div>}
+            {error && <div className="assistant-error" role="alert"><span>{error}</span><button type="button" onClick={() => void ask(lastQuestion)} disabled={isLoading}><RefreshCw size={13} /> Повторить</button></div>}
           </div>
           <div className="assistant-suggestions">
-            {suggestions.slice(0, 3).map((suggestion) => (
-              <button type="button" key={suggestion} onClick={() => ask(suggestion)}>
-                {suggestion}
-              </button>
-            ))}
+            {suggestions.slice(0, 3).map((suggestion) => <button type="button" key={suggestion} onClick={() => void ask(suggestion)} disabled={isLoading}>{suggestion}</button>)}
           </div>
           <form className="assistant-form" onSubmit={submit}>
-            <input
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Задайте вопрос…"
-              aria-label="Вопрос AI-агенту"
-            />
-            <button type="submit" aria-label="Отправить вопрос">
-              <Send size={16} />
-            </button>
+            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Задайте вопрос…" aria-label="Вопрос AI-агенту" disabled={isLoading} />
+            <button type="submit" aria-label="Отправить вопрос" disabled={isLoading}><Send size={16} /></button>
           </form>
-          {latestSuggestion && (
-            <span className="assistant-hint">
-              <Sparkles size={13} /> Ответы основаны на содержании приложения
-            </span>
-          )}
+          {latestSuggestion && <span className="assistant-hint"><Sparkles size={13} /> Ответы основаны на содержании приложения · <a href="/privacy.html" target="_blank" rel="noreferrer">Политика данных</a></span>}
         </section>
       )}
-      <button
-        className="assistant-trigger"
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open}
-        aria-label="Открыть AI-агента"
-      >
-        <span className="assistant-trigger-icon">{open ? <ChevronDown size={19} /> : <Bot size={19} />}</span>
-        <span>{open ? "Свернуть агента" : "Спросить AI-агента"}</span>
+      <button className="assistant-trigger" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Открыть AI-агента">
+        <span className="assistant-trigger-icon">{open ? <ChevronDown size={19} /> : <Bot size={19} />}</span><span>{open ? "Свернуть агента" : "Спросить AI-агента"}</span>
       </button>
     </div>
   );
