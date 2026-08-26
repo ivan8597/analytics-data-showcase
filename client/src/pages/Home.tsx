@@ -1,5 +1,5 @@
 /* Editorial Systems: an asymmetric analytical report where signals, routes, and typography make the engineering story legible. */
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -70,6 +70,8 @@ const operations = [
 export default function Home() {
   const [pocOpen, setPocOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [requestStatus, setRequestStatus] = useState("");
+  const [request, setRequest] = useState({ name: "", company: "", email: "", topic: "Архитектурный POC", message: "" });
 
   const copyBrief = async () => {
     const text = "Контур данных: источники, качество, витрины, Docker/Kubernetes, мониторинг, документация и архитектурный POC.";
@@ -80,6 +82,22 @@ export default function Home() {
     } catch {
       setCopied(false);
     }
+  };
+
+  const sendRequest = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const subject = `Заявка с сайта: ${request.topic}`;
+    const body = [
+      `Имя: ${request.name}`,
+      `Компания / роль: ${request.company || "не указано"}`,
+      `Контакт: ${request.email}`,
+      `Тема: ${request.topic}`,
+      "",
+      "Задача:",
+      request.message,
+    ].join("\n");
+    setRequestStatus("Открываем письмо с заполненным брифом…");
+    window.location.href = `mailto:ivan8597@yandex.ru?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -295,16 +313,56 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="crypto-case" aria-labelledby="crypto-title">
+          <div className="section-shell crypto-layout">
+            <div className="crypto-intro">
+              <div className="section-meta"><span className="section-number">07 / OPEN SOURCE</span><span className="eyebrow">Pet / Portfolio project</span><i /></div>
+              <h2 id="crypto-title">End-to-end DWH pipeline для криптовалютных данных.</h2>
+              <p>Автоматизировали полный путь ценовых данных BTC-USD и ETH-USD: от Coinbase API до аналитической выдачи в ClickHouse и BI.</p>
+              <div className="crypto-route mono"><span>Coinbase API</span><i /><span>MinIO / S3</span><i /><span>PostgreSQL / Greenplum</span><i /><span>dbt</span><i /><span>ClickHouse</span><i /><span>BI</span></div>
+              <p className="crypto-note"><span>Открытый проект.</span> Код и данные организованы как воспроизводимый Data Engineering-контур: ingestion → storage → staging → transformation → quality → serving → orchestration → CI/CD.</p>
+            </div>
+            <div className="crypto-evidence">
+              <div className="crypto-schedule"><span>scheduler</span><strong>hourly</strong><small>Extract → Load → dbt Build → Sync</small></div>
+              <div className="crypto-checks">
+                <div><small>raw layer</small><strong>append-only</strong><span>MinIO / S3 + точные S3 keys в Airflow XCom</span></div>
+                <div><small>serving</small><strong>idempotent</strong><span>ReplacingMergeTree + окно late-arriving данных 48 ч</span></div>
+                <div><small>quality</small><strong>tested</strong><span>dbt tests, pytest, проверки аномальных цен и CI</span></div>
+              </div>
+              <div className="crypto-stack"><span>Python</span><span>SQL</span><span>Airflow</span><span>dbt</span><span>MinIO</span><span>Docker</span><span>GitHub Actions</span><span>Ruff</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="request-section" id="request" aria-labelledby="request-title">
+          <div className="section-shell request-layout">
+            <div className="request-copy">
+              <div className="section-meta"><span className="section-number">08 / ЗАЯВКА</span><span className="eyebrow">Первый контакт</span><i /></div>
+              <h2 id="request-title">Начнём с задачи, а не со стека.</h2>
+              <p>Опишите контур, витрину или архитектурную гипотезу. Сформируем письмо с вашим брифом и отправим его напрямую команде.</p>
+              <div className="request-aside"><span className="mono">Адрес для заявки</span><strong>ivan8597@yandex.ru</strong><small>После отправки откроется ваше почтовое приложение — текст письма уже будет заполнен.</small></div>
+            </div>
+            <form className="request-form" onSubmit={sendRequest}>
+              <label><span>Как к вам обращаться *</span><input required value={request.name} onChange={(event) => setRequest({ ...request, name: event.target.value })} placeholder="Имя" /></label>
+              <label><span>Компания или роль</span><input value={request.company} onChange={(event) => setRequest({ ...request, company: event.target.value })} placeholder="Например, руководитель BI" /></label>
+              <label><span>Контакт для ответа *</span><input required type="email" value={request.email} onChange={(event) => setRequest({ ...request, email: event.target.value })} placeholder="name@company.ru" /></label>
+              <label><span>Что нужно обсудить</span><select value={request.topic} onChange={(event) => setRequest({ ...request, topic: event.target.value })}><option>Архитектурный POC</option><option>Построение DWH</option><option>Витрины и качество данных</option><option>Оркестрация и мониторинг</option><option>Другое</option></select></label>
+              <label className="request-message"><span>Коротко о задаче *</span><textarea required value={request.message} onChange={(event) => setRequest({ ...request, message: event.target.value })} placeholder="Источники, текущая сложность, ожидаемый результат…" /></label>
+              <div className="request-action"><button className="primary-btn" type="submit">Сформировать заявку <ArrowRight size={17} /></button><span aria-live="polite">{requestStatus || "Без регистрации и передачи данных через сайт."}</span></div>
+            </form>
+          </div>
+        </section>
+
         <section className="final-cta" id="contact" aria-labelledby="contact-title">
           <div className="section-shell final-inner">
             <div>
-              <div className="section-meta"><span className="section-number">07 / СТАРТ</span><span className="eyebrow">Следующий шаг</span><i /></div>
+              <div className="section-meta"><span className="section-number">09 / СТАРТ</span><span className="eyebrow">Следующий шаг</span><i /></div>
               <h2 id="contact-title">Соберём контур, который выдержит рост данных.</h2>
             </div>
             <div className="final-side">
               <p>Начните с одной витрины, процесса обновления или архитектурной гипотезы. Зафиксируем источники, риски, критерии качества и путь к устойчивой реализации.</p>
               <div className="final-buttons">
-                <a className="primary-btn" href="mailto:team@example.com?subject=Контур%20данных">Обсудить контур <ArrowRight size={17} /></a>
+                <a className="primary-btn" href="#request">Обсудить контур <ArrowRight size={17} /></a>
                 <button className="secondary-btn" type="button" onClick={copyBrief}><TerminalSquare size={16} /> Скопировать бриф</button>
               </div>
               <span className="copy-note" aria-live="polite">{copied ? "Бриф скопирован в буфер обмена" : "Короткий бриф: единый контур данных"}</span>
