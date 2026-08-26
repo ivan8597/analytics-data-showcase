@@ -97,6 +97,7 @@ export default function Home() {
             <a href="#contour">Контур</a>
             <a href="#operations">Процессы</a>
             <a href="#registry">Реестр</a>
+            <a href="#case">Кейс</a>
           </nav>
           <a className="nav-cta" href="#contact">Обсудить задачу <ArrowDownRight size={14} /></a>
         </div>
@@ -256,10 +257,48 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="case-study" id="case" aria-labelledby="case-title">
+          <div className="section-shell">
+            <div className="case-topline">
+              <div className="section-meta"><span className="section-number">06 / КЕЙС</span><span className="eyebrow">Логистика и транспорт</span><i /></div>
+              <span className="case-nda">NDA / клиент обезличен</span>
+            </div>
+            <div className="case-heading">
+              <h2 id="case-title">Единая аналитическая платформа для логистической компании.</h2>
+              <p>Консолидировали операционные, финансовые и HR-данные в контур <strong>Sources → Staging → Data Vault → Data Marts → BI</strong>. Результат — устойчивые витрины для Power BI и управленческой отчётности.</p>
+            </div>
+
+            <div className="case-grid">
+              <div className="case-results">
+                <div className="result-lead"><span>регулярная отчётность</span><strong>15–20 мин</strong><small>вместо нескольких часов</small></div>
+                <div className="result-mini"><strong>~70%</strong><span>меньше ручных операций</span></div>
+                <div className="result-mini"><strong>30+</strong><span>автоматизированных проверок качества</span></div>
+                <div className="case-proof"><span className="mono">измеримый эффект</span><p>Управленческие отчёты стали обновляться в предсказуемом автоматическом ритме, а контроль качества был встроен в маршрут данных до публикации витрин.</p></div>
+              </div>
+
+              <div className="case-system">
+                <span className="case-system-label">производственный контур</span>
+                <div className="case-route-map" aria-label="Архитектура проекта">
+                  <span>12 источников</span><i /><span>Greenplum DWH</span><i /><span>40+ витрин</span><i /><span>Power BI</span>
+                </div>
+                <div className="case-stack"><span>PostgreSQL</span><span>ClickHouse</span><span>Python</span><span>dbt</span><span>Airflow</span><span>Soda Core</span><span>Docker</span><span>Kubernetes</span><span>GitHub Actions</span></div>
+                <dl className="case-facts">
+                  <div><dt>Период</dt><dd>8 месяцев</dd></div>
+                  <div><dt>Объём</dt><dd>~50 млн записей</dd></div>
+                  <div><dt>Приток</dt><dd>до 200 тыс. / сутки</dd></div>
+                  <div><dt>Компоненты</dt><dd>POC → запуск</dd></div>
+                </dl>
+              </div>
+            </div>
+
+            <div className="case-footer"><span className="mono">scope</span><p>Проектирование · POC · разработка · миграция · промышленный запуск · мониторинг · обработка инцидентов</p><ArrowDownRight size={19} /></div>
+          </div>
+        </section>
+
         <section className="final-cta" id="contact" aria-labelledby="contact-title">
           <div className="section-shell final-inner">
             <div>
-              <div className="section-meta"><span className="section-number">06 / СТАРТ</span><span className="eyebrow">Следующий шаг</span><i /></div>
+              <div className="section-meta"><span className="section-number">07 / СТАРТ</span><span className="eyebrow">Следующий шаг</span><i /></div>
               <h2 id="contact-title">Соберём контур, который выдержит рост данных.</h2>
             </div>
             <div className="final-side">

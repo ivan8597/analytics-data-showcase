@@ -169,6 +169,43 @@ button, a[href] { cursor: pointer; }
 .excel-check li { display: flex; align-items: center; gap: 9px; font-size: .93rem; }
 .excel-check svg { color: var(--teal-deep); width: 17px; }
 
+.case-study { padding: 132px 0 110px; background: var(--paper); position: relative; overflow: hidden; }
+.case-study::before { content: ""; position: absolute; width: 460px; height: 460px; border-radius: 50%; border: 1px solid rgba(23,34,38,.1); right: -270px; top: 90px; box-shadow: 0 0 0 52px rgba(23,34,38,.025), 0 0 0 104px rgba(23,34,38,.018); }
+.case-topline { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.case-nda { border: 1px solid var(--line); padding: 8px 10px; color: #687373; background: rgba(255,253,247,.6); font: 10px "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.case-heading { position: relative; z-index: 1; display: grid; grid-template-columns: 1.2fr .8fr; gap: 72px; align-items: end; margin-top: 23px; }
+.case-heading h2 { max-width: 810px; margin: 0; font: 720 clamp(2.65rem, 5vw, 5.3rem)/.94 "Manrope", sans-serif; letter-spacing: -.075em; }
+.case-heading p { max-width: 430px; margin: 0 0 6px; color: #586363; font-size: 1.02rem; }
+.case-heading strong { color: var(--teal-deep); font-weight: 600; }
+.case-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.02fr .98fr; gap: 1px; margin-top: 62px; background: var(--line); border: 1px solid var(--line); }
+.case-results, .case-system { background: #fffdf7; min-height: 390px; }
+.case-results { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1.3fr 1fr; }
+.result-lead { grid-row: span 2; padding: 36px; border-right: 1px solid var(--line); display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(160deg, #fffdf7 0%, #e2f4ef 100%); }
+.result-lead span, .case-system-label { color: var(--teal-deep); font: 10px "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
+.result-lead strong { margin-top: 12px; color: var(--ink); font: 750 clamp(2.8rem, 5vw, 5.15rem)/.87 "Manrope", sans-serif; letter-spacing: -.08em; }
+.result-lead small { margin-top: 13px; color: #536060; font-size: .9rem; }
+.result-mini { padding: 28px; border-bottom: 1px solid var(--line); }
+.result-mini + .result-mini { border-bottom: 0; }
+.result-mini strong { display: block; font: 720 2.35rem/1 "Manrope", sans-serif; letter-spacing: -.07em; color: var(--coral); }
+.result-mini span { display: block; max-width: 160px; margin-top: 10px; color: #5d6968; font-size: .84rem; line-height: 1.3; }
+.case-proof { grid-column: 2; padding: 28px; align-self: end; border-top: 1px solid var(--line); }
+.case-proof span { color: var(--teal-deep); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+.case-proof p { margin: 10px 0 0; color: #536060; font-size: .84rem; line-height: 1.4; }
+.case-system { padding: 36px; background: var(--ink); color: #fffaf0; }
+.case-route-map { display: flex; align-items: center; margin-top: 34px; font: 500 10px "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,250,240,.85); }
+.case-route-map i { display: inline-block; width: 30px; min-width: 18px; height: 1px; margin: 0 8px; background: var(--teal); position: relative; }
+.case-route-map i::after { content: ""; position: absolute; right: -1px; top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+.case-stack { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 34px; }
+.case-stack span { color: rgba(255,250,240,.72); border: 1px solid rgba(255,250,240,.18); padding: 7px 8px; font: 10px "IBM Plex Mono", monospace; letter-spacing: .02em; }
+.case-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin: 34px 0 0; background: rgba(255,250,240,.15); border: 1px solid rgba(255,250,240,.15); }
+.case-facts div { padding: 14px; background: var(--ink); }
+.case-facts dt { color: #82e4d8; font: 10px "IBM Plex Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.case-facts dd { margin: 7px 0 0; color: rgba(255,250,240,.84); font-size: .9rem; }
+.case-footer { position: relative; z-index: 1; display: grid; grid-template-columns: 88px 1fr auto; gap: 18px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.case-footer span { color: var(--teal-deep); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.case-footer p { margin: 0; color: #677271; font-size: .86rem; }
+.case-footer svg { color: var(--teal-deep); }
+
 .final-cta { position: relative; overflow: hidden; padding: 130px 0; color: #fffaf0; background: var(--ink); }
 .final-cta::before { content: ""; position: absolute; width: 480px; height: 480px; right: 8%; top: -230px; border-radius: 50%; border: 1px solid rgba(13,175,154,.35); box-shadow: 0 0 0 72px rgba(13,175,154,.05), 0 0 0 144px rgba(13,175,154,.035); }
 .final-inner { position: relative; display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; }
@@ -196,6 +233,8 @@ button, a[href] { cursor: pointer; }
   .hero-image { opacity: .45; width: 100vw; right: -35vw; }
   .hero-fade { background: linear-gradient(90deg, rgba(23,34,38,.98), rgba(23,34,38,.7)); }
   .intro-layout, .architecture-layout, .operations-grid, .excel-layout, .final-inner { grid-template-columns: 1fr; gap: 38px; }
+  .case-heading, .case-grid { grid-template-columns: 1fr; gap: 28px; }
+  .case-grid { gap: 1px; }
   .architecture-aside { border-left: 0; padding-left: 0; border-top: 1px solid rgba(255,250,240,.16); padding-top: 32px; }
   .capability-grid { grid-template-columns: 1fr 1fr; }
   .registry-panel { padding: 40px; }
@@ -219,6 +258,12 @@ button, a[href] { cursor: pointer; }
   .flow-arrow { height: 34px; width: 1px; margin-left: 26px; background: linear-gradient(to bottom, rgba(255,250,240,.12), var(--teal)); }
   .flow-arrow::after { right: -3px; top: auto; bottom: -1px; transform: rotate(135deg); }
   .poc-reveal, .excel-check { grid-template-columns: 1fr; }
+  .case-topline { align-items: flex-start; flex-direction: column; gap: 14px; }
+  .case-results { min-height: 520px; }
+  .case-system { min-height: auto; }
+  .case-route-map { flex-wrap: wrap; gap: 10px 0; line-height: 1.4; }
+  .case-route-map i { width: 18px; }
+  .case-footer { grid-template-columns: 1fr; gap: 7px; }
   .registry-panel { min-height: 550px; padding: 30px; }
   .registry-panel img { width: 120%; right: -38%; opacity: .27; }
   .registry-evidence { top: 20px; right: 20px; }
