@@ -1,0 +1,31 @@
+/* AI assistant */
+.assistant { position: fixed; z-index: 50; right: 24px; bottom: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.assistant-trigger { display: inline-flex; align-items: center; gap: 10px; border: 1px solid rgba(13,175,154,.4); border-radius: 999px; padding: 11px 16px 11px 11px; color: #fffaf0; background: var(--ink); box-shadow: 0 16px 42px rgba(23,34,38,.2); font: 600 13px "Manrope", sans-serif; transition: transform .18s ease, background .18s ease; }
+.assistant-trigger:hover { transform: translateY(-2px); background: #243538; }
+.assistant-trigger-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; color: var(--ink); background: var(--teal); }
+.assistant-panel { width: min(390px, calc(100vw - 32px)); overflow: hidden; border: 1px solid rgba(23,34,38,.16); border-radius: 20px; background: #fffdf7; box-shadow: 0 20px 70px rgba(23,34,38,.25); animation: assistant-in .2s ease both; }
+@keyframes assistant-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.assistant-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px; color: #fffaf0; background: var(--ink); }
+.assistant-title { display: flex; align-items: center; gap: 10px; }
+.assistant-title strong, .assistant-title small { display: block; }
+.assistant-title strong { font: 650 .92rem "Manrope", sans-serif; }
+.assistant-title small { margin-top: 2px; color: rgba(255,250,240,.56); font: 10px "IBM Plex Mono", monospace; }
+.assistant-orb { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; color: var(--ink); background: var(--teal); }
+.assistant-close { display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 8px; color: rgba(255,250,240,.72); background: transparent; }
+.assistant-close:hover { color: #fffaf0; background: rgba(255,250,240,.1); }
+.assistant-messages { display: grid; gap: 10px; max-height: 310px; overflow-y: auto; padding: 16px; background: #f4f0e8; }
+.assistant-message { max-width: 88%; padding: 10px 12px; border-radius: 13px; font-size: .88rem; line-height: 1.4; }
+.assistant-assistant { justify-self: start; color: #314141; border: 1px solid rgba(23,34,38,.1); background: #fffdf7; }
+.assistant-user { justify-self: end; color: var(--ink); background: #c9eee7; }
+.assistant-suggestions { display: flex; flex-wrap: wrap; gap: 7px; padding: 12px 16px 0; background: #fffdf7; }
+.assistant-suggestions button { border: 1px solid rgba(23,34,38,.16); border-radius: 999px; padding: 7px 9px; color: #49605e; background: transparent; font: 10px "IBM Plex Mono", monospace; text-align: left; }
+.assistant-suggestions button:hover { border-color: var(--teal-deep); color: var(--teal-deep); }
+.assistant-form { display: flex; gap: 8px; padding: 12px 16px 9px; background: #fffdf7; }
+.assistant-form input { min-width: 0; flex: 1; border: 1px solid rgba(23,34,38,.17); border-radius: 10px; outline: 0; padding: 10px 11px; color: var(--ink); background: #fffdf7; font: .9rem "Source Sans 3", sans-serif; }
+.assistant-form input:focus { border-color: var(--teal-deep); box-shadow: 0 0 0 3px rgba(13,175,154,.13); }
+.assistant-form button { display: grid; place-items: center; width: 40px; border: 0; border-radius: 10px; color: var(--ink); background: var(--teal); }
+.assistant-hint { display: flex; align-items: center; gap: 5px; padding: 0 16px 13px; color: #798281; font: 9px "IBM Plex Mono", monospace; }
+@media (max-width: 620px) { .assistant { right: 16px; bottom: 16px; } .assistant-trigger { padding-right: 13px; } .assistant-panel { width: calc(100vw - 32px); } }
+.assistant-message > span { display: block; }
+.assistant-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; color: var(--teal-deep); font: 600 10px "IBM Plex Mono", monospace; letter-spacing: .04em; text-decoration: none; text-transform: uppercase; }
+.assistant-link:hover { color: var(--ink); text-decoration: underline; }

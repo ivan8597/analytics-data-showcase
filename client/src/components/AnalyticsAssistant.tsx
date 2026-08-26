@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Bot, ChevronDown, ExternalLink, Send, Sparkles, X } from "lucide-react";
+import "./assistant.css";
 
 type Message = { role: "assistant" | "user"; text: string; link?: string; label?: string };
 type KnowledgeItem = { keywords: string[]; answer: string; link?: string; label?: string };
@@ -100,13 +101,20 @@ export default function AnalyticsAssistant() {
     },
   ]);
 
-  const latestSuggestion = useMemo(() => suggestions.filter((suggestion) => !messages.some((message) => message.text === suggestion))[0], [messages]);
+  const latestSuggestion = useMemo(
+    () => suggestions.filter((suggestion) => !messages.some((message) => message.text === suggestion))[0],
+    [messages],
+  );
 
   const ask = (question: string) => {
     const trimmed = question.trim();
     if (!trimmed) return;
     const result = findAnswer(trimmed);
-    setMessages((current) => [...current, { role: "user", text: trimmed }, { role: "assistant", text: result.answer, link: result.link, label: result.label }]);
+    setMessages((current) => [
+      ...current,
+      { role: "user", text: trimmed },
+      { role: "assistant", text: result.answer, link: result.link, label: result.label },
+    ]);
     setInput("");
   };
 
@@ -120,24 +128,65 @@ export default function AnalyticsAssistant() {
       {open && (
         <section className="assistant-panel" aria-label="AI-агент по приложению">
           <div className="assistant-head">
-            <div className="assistant-title"><span className="assistant-orb"><Bot size={18} /></span><div><strong>AI-агент витрины</strong><small>знает разделы и контур данных</small></div></div>
-            <button className="assistant-close" type="button" onClick={() => setOpen(false)} aria-label="Закрыть чат"><X size={18} /></button>
+            <div className="assistant-title">
+              <span className="assistant-orb">
+                <Bot size={18} />
+              </span>
+              <div>
+                <strong>AI-агент витрины</strong>
+                <small>знает разделы и контур данных</small>
+              </div>
+            </div>
+            <button className="assistant-close" type="button" onClick={() => setOpen(false)} aria-label="Закрыть чат">
+              <X size={18} />
+            </button>
           </div>
           <div className="assistant-messages" aria-live="polite">
-            {messages.map((message, index) => <div className={`assistant-message assistant-${message.role}`} key={`${message.role}-${index}`}><span>{message.text}</span>{message.link && message.label && <a className="assistant-link" href={message.link}>{message.label} <ExternalLink size={12} /></a></div>)}
+            {messages.map((message, index) => (
+              <div className={`assistant-message assistant-${message.role}`} key={`${message.role}-${index}`}>
+                <span>{message.text}</span>
+                {message.link && message.label && (
+                  <a className="assistant-link" href={message.link}>
+                    {message.label} <ExternalLink size={12} />
+                  </a>
+                )}
+              </div>
+            ))}
           </div>
           <div className="assistant-suggestions">
-            {suggestions.slice(0, 3).map((suggestion) => <button type="button" key={suggestion} onClick={() => ask(suggestion)}>{suggestion}</button>)}
+            {suggestions.slice(0, 3).map((suggestion) => (
+              <button type="button" key={suggestion} onClick={() => ask(suggestion)}>
+                {suggestion}
+              </button>
+            ))}
           </div>
           <form className="assistant-form" onSubmit={submit}>
-            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Задайте вопрос…" aria-label="Вопрос AI-агенту" />
-            <button type="submit" aria-label="Отправить вопрос"><Send size={16} /></button>
+            <input
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              placeholder="Задайте вопрос…"
+              aria-label="Вопрос AI-агенту"
+            />
+            <button type="submit" aria-label="Отправить вопрос">
+              <Send size={16} />
+            </button>
           </form>
-          {latestSuggestion && <span className="assistant-hint"><Sparkles size={13} /> Ответы основаны на содержании приложения</span>}
+          {latestSuggestion && (
+            <span className="assistant-hint">
+              <Sparkles size={13} /> Ответы основаны на содержании приложения
+            </span>
+          )}
         </section>
       )}
-      <button className="assistant-trigger" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Открыть AI-агента">
-        <span className="assistant-trigger-icon">{open ? <ChevronDown size={19} /> : <Bot size={19} />}</span><span>{open ? "Свернуть агента" : "Спросить AI-агента"}</span>
+      <button
+        className="assistant-trigger"
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-label="Открыть AI-агента"
+      >
+        <span className="assistant-trigger-icon">{open ? <ChevronDown size={19} /> : <Bot size={19} />}</span>
+        <span>{open ? "Свернуть агента" : "Спросить AI-агента"}</span>
       </button>
     </div>
   );
