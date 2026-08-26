@@ -1,5 +1,6 @@
 /* Editorial Systems: an asymmetric analytical report where signals, routes, and typography make the engineering story legible. */
 import { useState, type FormEvent } from "react";
+import AnalyticsAssistant from "../components/AnalyticsAssistant";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -371,6 +372,7 @@ export default function Home() {
         </section>
       </main>
 
+      <AnalyticsAssistant />
       <footer className="site-footer"><div className="footer-inner"><span>Витрина данных / инженерная аналитика</span><span>источник → качество → витрина → решение</span></div></footer>
     </div>
   );
