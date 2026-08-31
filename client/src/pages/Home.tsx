@@ -349,7 +349,7 @@ export default function Home() {
               <label><span>Контакт для ответа *</span><input required type="email" value={request.email} onChange={(event) => setRequest({ ...request, email: event.target.value })} placeholder="name@company.ru" /></label>
               <label><span>Что нужно обсудить</span><select value={request.topic} onChange={(event) => setRequest({ ...request, topic: event.target.value })}><option>Архитектурный POC</option><option>Построение DWH</option><option>Витрины и качество данных</option><option>Оркестрация и мониторинг</option><option>Другое</option></select></label>
               <label className="request-message"><span>Коротко о задаче *</span><textarea required value={request.message} onChange={(event) => setRequest({ ...request, message: event.target.value })} placeholder="Источники, текущая сложность, ожидаемый результат…" /></label>
-              <div className="request-action"><button className="primary-btn" type="submit">Сформировать заявку <ArrowRight size={17} /></button><span aria-live="polite">{requestStatus || "Без регистрации и передачи данных через сайт."}</span></div>
+              <div className="request-action"><button className="primary-btn" type="submit">Сформировать заявку <ArrowRight size={17} /></button><span aria-live="polite">{requestStatus || "Без регистрации; чат обрабатывается по политике данных."}</span></div>
             </form>
           </div>
         </section>
